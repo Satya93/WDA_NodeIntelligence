@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import time
 import csv
+import random
 
 #Global Scope
 _slope = 0
@@ -29,20 +30,21 @@ def load(filename, train):
     _test_data.append(_data[train:])
     _test_data = _test_data[0]
 
-def regression(lim, alp, gr):
+def train(lim, alp, gr):
     global _train_data,_slope,_mean
 
-    #Metrics
-    alpha = alp
+    # Metrics
     numel = len(_train_data)
     mean = sum(_train_data)/numel
-    _slope = 5
-    _intercept = mean
-    print _intercept
-    iterations = 0
     axis = range(0,numel)
     maxel = max(_train_data)
     minel = min(_train_data)
+
+    # Local variables
+    alpha = alp
+    _slope = random.randint(0,4)
+    _intercept = mean
+    iterations = 0
     tot_err0 = 0
     tot_err1 = 0
     tot_cost = 20
@@ -98,6 +100,25 @@ def regression(lim, alp, gr):
         iterations+=1
     return[_slope,_intercept]
 
+def test():
+    global _test_data, _slope, _intercept, _train_data
+
+    # Metrics
+    numel = len(_test_data)
+    offset = len(_train_data)
+
+    # Local variables
+    iterations = 0
+    tot_cost = 0
+
+    while iterations < numel:
+        error = _slope*(iterations+offset)+_intercept-_test_data[iterations]
+        print "Predicted Value : ",_slope*(iterations+offset)+_intercept," | Actual Value : ",_test_data[iterations]," | Error : ",error
+        cost = error*error
+        tot_cost += cost
+        iterations += 1
+    tot_cost = tot_cost/(2*numel)
+    print "Total Cost after Testing : ", tot_cost
 
 
 
