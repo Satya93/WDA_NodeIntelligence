@@ -1,3 +1,6 @@
+import random
+import csv
+
 def generate(size,lb,ub,filename):
     data = []
     ele = 0
@@ -10,4 +13,3 @@ def generate(size,lb,ub,filename):
         writer = csv.writer(myFile)
         writer.writerows([data])
     print data
-    return data
