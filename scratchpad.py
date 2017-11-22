@@ -4,3 +4,4 @@ import regression
 regression.reset()
 regression.load('lrg_100_10.csv',80)
 print regression._data
+print regression._test_data
