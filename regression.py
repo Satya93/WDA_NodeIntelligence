@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import time
 import csv
 import random
+import math
 
 #Global Scope
 _slope = 0
@@ -9,13 +10,17 @@ _intercept = 0
 _data = []
 _train_data = []
 _test_data = []
+_estimate_data = []
+_done = 0
 
 def reset():
+    global _slope, _intercept, _data, _train_data, _test_data, _estimate_data
     _slope = 0
     _intercept = 0
     _data = []
     _train_data = []
     _test_data = []
+    _estimate_data = []
 
 def load(filename, train):
     global _train_data,_test_data,_data
@@ -31,28 +36,29 @@ def load(filename, train):
     _test_data = _test_data[0]
 
 def train(lim, alp, gr):
-    global _train_data,_slope,_mean
+    global _train_data,_slope,_mean,_axis,_cost_array
 
     # Metrics
     numel = len(_train_data)
     mean = sum(_train_data)/numel
-    axis = range(0,numel)
+    _axis = range(0,numel)
     maxel = max(_train_data)
     minel = min(_train_data)
 
     # Local variables
     alpha = alp
-    _slope = random.randint(0,4)
+    _slope = (_train_data[numel-1]-_train_data[0])/numel
     _intercept = mean
     iterations = 0
     tot_err0 = 0
     tot_err1 = 0
-    tot_cost = 20
-    old_cost = 10
+    tot_cost = 0
+    old_cost = 0
     mse = 0
-    cost_array = []
+    flag = 0
+    _cost_array = []
 
-    while abs(tot_cost-old_cost) > lim:
+    while abs(tot_cost-old_cost) > lim or flag == 0 :
         # Reset aggregation variables
         estimates = []
         old_cost = tot_cost
@@ -81,7 +87,7 @@ def train(lim, alp, gr):
         
         # Append costs to cost array
         tot_cost = tot_cost/(2*numel)
-        cost_array.append(tot_cost)
+        _cost_array.append(tot_cost)
 
         # Adaptive Step size Learning rate
         if (tot_cost < old_cost) : alpha += alpha*gr
@@ -95,9 +101,13 @@ def train(lim, alp, gr):
 
         # Prints and debugs
         #print "At slope = %.2f" %_slope, " and intercept = %.2f" %_intercept, " Total cost is : ", tot_cost
-        print "Error : ", tot_cost , " | Iterations = ", iterations
+        #print "Error : ", tot_cost , " | Iterations = ", iterations
 
+        flag = 1
         iterations+=1
+
+
+    print "Error : ", tot_cost , " | Iterations = ", iterations
     return[_slope,_intercept]
 
 def test():
@@ -113,12 +123,12 @@ def test():
 
     while iterations < numel:
         error = _slope*(iterations+offset)+_intercept-_test_data[iterations]
-        print "Predicted Value : ",_slope*(iterations+offset)+_intercept," | Actual Value : ",_test_data[iterations]," | Error : ",error
+        #print "Predicted Value : ",_slope*(iterations+offset)+_intercept," | Actual Value : ",_test_data[iterations]," | Error : ",error
         cost = error*error
         tot_cost += cost
         iterations += 1
     tot_cost = tot_cost/(2*numel)
-    print "Total Cost after Testing : ", tot_cost
+    print "Total Cost after Testing : ", math.sqrt(tot_cost)
 
 
 
