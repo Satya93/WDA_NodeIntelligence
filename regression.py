@@ -90,17 +90,13 @@ def train(lim, alp, gr):
         _cost_array.append(tot_cost)
 
         # Adaptive Step size Learning rate
+        factor = 2.7183**(-1/abs(old_cost-tot_cost))
+        #factor = gr
         if (tot_cost < old_cost) :
-            factor = 2.7183**(-1/(old_cost-tot_cost))
-            #factor = gr
-            #factor = gr
-            #print "Factor is : ",factor
-            alpha += alpha*factor/2
+            alpha += alpha*factor
             #alpha += alpha*factor
             print "Increase Alpha to : ",alpha," by a factor of ",1+factor
         else : 
-            factor = 2.7183**(-1/(tot_cost-old_cost))
-            #print "Factor is : ",factor
             alpha -= alpha*factor
             print "Decrease Alpha to : ",alpha," by a factor of ",1-factor
         print 
