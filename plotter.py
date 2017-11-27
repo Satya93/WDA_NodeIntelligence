@@ -8,7 +8,7 @@ def plot_adaptive(data,labeld):
     plt.semilogy(axis,data,"r")
     plt.xlabel('Iterations')
     plt.ylabel('Cost')
-    plt.title('Change in Error with Time - Exponential Adaptive Factor')
+    plt.title('Change in Error with Time - Adaptive Factor Comparison')
     red_patch = mpatches.Patch(color='red', label=legend)
     plt.legend(handles=[red_patch])
     plt.grid(True)

@@ -12,6 +12,7 @@ _train_data = []
 _test_data = []
 _estimate_data = []
 _done = 0
+_test_cost = 10
 
 def reset():
     global _slope, _intercept, _data, _train_data, _test_data, _estimate_data
@@ -21,6 +22,7 @@ def reset():
     _train_data = []
     _test_data = []
     _estimate_data = []
+    _test_cost = 10
 
 def load(filename, train):
     global _train_data,_test_data,_data
@@ -36,6 +38,7 @@ def load(filename, train):
     _test_data = _test_data[0]
 
 def train(lim, alp, gr):
+    print "Rate is : ",gr
     global _train_data,_slope,_mean,_axis,_cost_array
 
     # Metrics
@@ -46,7 +49,7 @@ def train(lim, alp, gr):
     minel = min(_train_data)
 
     # Local variables
-    alpha = alp
+    alpha = 1
     _slope = (_train_data[numel-1]-_train_data[0])/numel
     _intercept = mean
     iterations = 0
@@ -90,16 +93,18 @@ def train(lim, alp, gr):
         _cost_array.append(tot_cost)
 
         # Adaptive Step size Learning rate
-        factor = 2.7183**(-1/abs(old_cost-tot_cost))
-        #factor = gr
-        if (tot_cost < old_cost) :
-            alpha += alpha*factor
-            #alpha += alpha*factor
-            print "Increase Alpha to : ",alpha," by a factor of ",1+factor
-        else : 
-            alpha -= alpha*factor
-            print "Decrease Alpha to : ",alpha," by a factor of ",1-factor
-        print 
+        if old_cost!=tot_cost:
+            factor = gr
+            if gr==1:
+                factor = 2.7183**(-1/abs(old_cost-tot_cost))
+            if (tot_cost < old_cost) :
+                alpha += alpha*factor
+                #alpha += alpha*factor
+                #print "Increase Alpha to : ",alpha," by a factor of ",1+factor
+            else : 
+                alpha -= alpha*factor
+                #print "Decrease Alpha to : ",alpha," by a factor of ",1-factor
+            #print 
 
         # Update values of slope and intercept
         del_0 = alpha*tot_err0/numel
@@ -112,15 +117,27 @@ def train(lim, alp, gr):
 
         flag = 1
         iterations+=1
-        print "Error : ", tot_cost , " | Iterations = ", iterations
+        #print "Error : ", tot_cost , " | Iterations = ", iterations
         #time.sleep(1)
 
+        test()
+        if _test_cost < alp:
+            if tot_cost < alp*4:
+                print "Optimized! "
+                print "At slope = %.2f" %_slope, " and intercept = %.2f" %_intercept, " Total cost is : ", tot_cost
+                print "Avg Error : ", tot_cost/numel , " | Iterations = ", iterations
+                print "Total Cost after Testing : ", _test_cost
+                print
+                return _cost_array 
 
+    #return[_slope,_intercept]
     print "Error : ", tot_cost , " | Iterations = ", iterations
-    return[_slope,_intercept]
+    print "Total Cost after Testing : ", _test_cost
+    print
+    return _cost_array
 
 def test():
-    global _test_data, _slope, _intercept, _train_data
+    global _test_data, _slope, _intercept, _train_data, _test_cost
 
     # Metrics
     numel = len(_test_data)
@@ -137,7 +154,8 @@ def test():
         tot_cost += cost
         iterations += 1
     tot_cost = tot_cost/(2*numel)
-    print "Total Cost after Testing : ", math.sqrt(tot_cost)
+    _test_cost = math.sqrt(tot_cost)
+    
 
 
 

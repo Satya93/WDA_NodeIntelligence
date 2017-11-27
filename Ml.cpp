@@ -2,6 +2,8 @@
 #include <Arduino.h>
 
 int *buff = 0;
+int *buff_tr = 0;
+int *buff_te = 0;
 
 void Ml::clear_all()
 {
@@ -41,30 +43,15 @@ void Ml::append(float f)
   //-------------------------------------------------
   _del = f-_old;
   _old = f;
-  /*SerialUSB.print("Count : ");
-  SerialUSB.println(_cnt);
-  SerialUSB.print("Minimum Value : ");
-  SerialUSB.println(_min);
-  SerialUSB.print("Maximum Value : ");
-  SerialUSB.println(_max);
-  SerialUSB.print("Sum : ");
-  SerialUSB.println(_sum);
-  SerialUSB.print("Standard Deviation : ");
-  SerialUSB.println(_stddev);
-  //SerialUSB.print("Change in readings : ");
-  //SerialUSB.println(_del);
-  //SerialUSB.print("Target Value : ");
-  //SerialUSB.println(calc_val);
-  //SerialUSB.print("Err : ");
-  //SerialUSB.println(_err/_cnt);
-  //SerialUSB.println(" ");*/
 }
 
-void Ml::sample(int s)
+void Ml::sample(int s, int tr)
 {
   buff = (int*) malloc(s * sizeof(int));
+  buff_tr = (int*) malloc(tr * sizeof(int));
+  buff_te = (int*) malloc((s-tr) * sizeof(int));
+  
   int curr_val;
-  int mx_cnt = s;
   _mx_cnt = s;
   int count = 0;
   while(count<s){
@@ -74,6 +61,22 @@ void Ml::sample(int s)
     buff[count] = curr_val;
     count++;
   }
+  count = 0;
+  while(count<tr){
+    curr_val = _sample_data[count];
+    append(curr_val);
+    buff_tr[count] = curr_val;
+    count++;
+  }
+  while(count<s){
+    curr_val = _sample_data[count];
+    append(curr_val);
+    buff_te[count-tr] = curr_val;
+    count++;
+  }
+  _train_el = tr;
+  _test_el = s-tr;
+  int i = 0;
 }
 
 int Ml::get_data()
@@ -91,10 +94,10 @@ void Ml::regression(float inp_par, float inp_ar)
 {
   float ar = inp_ar;
   float err = 1000; 
-  float m = 5;
-  float c = _mean;
+  float m = 0;
+  float c = 0;
   float calc_val;
-  float alpha = 0.05;
+  float alpha = 1;
   float err_1;
   float err_0;
   float toterr_0;
@@ -105,44 +108,51 @@ void Ml::regression(float inp_par, float inp_ar)
   float tot_cost = 10;
   int itno = 0;
   int boost = 1;
-   SerialUSB.print("Adaptation ratio : ");
-   SerialUSB.println(ar);
-    //int maxcnt = inp_par;
-    //SerialUSB.println("Regression");
-    //while(tot_cost>inp_par){
-    //while(itno<maxcnt){
-    while(abs(olderr-tot_cost)>inp_par){
+  
+  SerialUSB.print("Adaptation ratio : ");
+  SerialUSB.println(ar);
+  
+   while(abs(olderr-tot_cost)>inp_par){
       // Reset Aggregation variables
       olderr = tot_cost;
       cost = 0;
       i = 0;
       toterr_1 = 0;
       toterr_0 = 0;
+      
       // Begin iteration
-      while(i<_mx_cnt){
+      while(i<_train_el){
         // Get Initial Estimate
         calc_val = m*(i+1) + c;
+        
         // Calculate Cost and First Derivatives of Slope and Error
-        cost = ((calc_val-buff[i])*(calc_val-buff[i]));
-        err_0 = (calc_val-buff[i]);
-        err_1 = (calc_val-buff[i])*(i - _min)/(_max-_min);
+        cost = ((calc_val-buff_tr[i])*(calc_val-buff[i]));
+        err_0 = (calc_val-buff_tr[i]);
+        err_1 = (calc_val-buff_tr[i])*(i - _min)/(_max-_min);
+        
         // Aggregate Errors
         toterr_0 += err_0;
         toterr_1 += err_1;
         tot_cost += cost;
         i++;
       }
+      
       // Calculate Iteration Cost
-      tot_cost = tot_cost/(2*_mx_cnt);
+      tot_cost = tot_cost/(2*_train_el);
+      /*SerialUSB.print("Total Cost at Iteration ");
+      SerialUSB.print(itno);
+      SerialUSB.print(" is ");
+      SerialUSB.println(tot_cost);*/
       if(olderr>tot_cost){
         alpha = alpha*(1+ar);
       }
       else{
         alpha = alpha*(1-ar);
       }
+      
       // Update Slope and Intercept
-      m = m - (alpha*toterr_1/_mx_cnt);
-      c = c - (alpha*toterr_0/_mx_cnt);
+      m = m - (alpha*toterr_1/_train_el);
+      c = c - (alpha*toterr_0/_train_el);
       itno++;
     }
     SerialUSB.print("Iterations : ");
@@ -162,23 +172,29 @@ void Ml::regression(float inp_par, float inp_ar)
 void Ml::test(){
  float mse;
   int curr_val;
-  int count = _mx_cnt;
-  while(count<_max_el){
-    curr_val = (_slope*count)+_inter-_sample_data[count];
-    //SerialUSB.print("Comparison Values : ");
-    //SerialUSB.print((_slope*count)+_inter);
-    //SerialUSB.print(" | ");
-    //SerialUSB.println(_sample_data[count]);
+  int count = 0;
+  int slop = 0;
+  SerialUSB.println(_train_el);
+  while(count<_test_el){
+    slop = count+_train_el;
+    curr_val = (_slope*slop)+_inter-buff_te[count];
+    /*SerialUSB.print("Comparison Values : ");
+    SerialUSB.print((_slope*slop)+_inter);
+    SerialUSB.print(" | ");
+    SerialUSB.println(buff_te[count]);*/
     get_data();
     append(curr_val*curr_val);
     mse = mse+(curr_val*curr_val);
     count++;
-    clear_all();
-    sample(75);
   }
-  mse = mse/(_max_el-_mx_cnt);
+  count = 0;
+  mse = mse/_test_el;
+  clear_all();
+  sample(100,75);
   SerialUSB.print("Mean Square Error on Test Dataset is : ");
   SerialUSB.println(mse);
+  SerialUSB.println("_____________________________________________________");
   SerialUSB.println( );
+  
 }
 
