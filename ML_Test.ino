@@ -4,15 +4,17 @@
 #include <FreeRTOS_ARM.h>
 #include "PowerDueLED.h"
 #include "Ml.h"
+#include "Time.h"
 
 void setup() {
-  float cie = 0.005;
+  noInterrupts();
+  float cie = 0.05;
   pd_rgb_led_init();
   pd_rgb_led(PD_OFF);
   SerialUSB.begin(9600);
   while(!SerialUSB){
   }
-  delay(1000);
+  //delay(1000);
   Ml ml;
   ml.clear_all();
   //ml.append(200);
@@ -21,16 +23,7 @@ void setup() {
   ml.sample(100,75);
   SerialUSB.println("Begin");
   pd_rgb_led(PD_RED);
-  delay(1000);
   ml.regression(cie,0.1);
-  ml.regression(cie,0.2);
-  ml.regression(cie,0.3);
-  ml.regression(cie,0.4);
-  ml.regression(cie,0.5);
-  ml.regression(cie,0.6);
-  ml.regression(cie,0.7);
-  ml.regression(cie,0.8);
-  ml.regression(cie,0.9);
   pd_rgb_led(PD_OFF);
   SerialUSB.println("Done");
 

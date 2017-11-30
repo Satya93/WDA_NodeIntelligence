@@ -109,8 +109,8 @@ void Ml::regression(float inp_par, float inp_ar)
   int itno = 0;
   int boost = 1;
   
-  SerialUSB.print("Adaptation ratio : ");
-  SerialUSB.println(ar);
+  //SerialUSB.print("Adaptation ratio : ");
+  //SerialUSB.println(ar);
   
    while(abs(olderr-tot_cost)>inp_par){
       // Reset Aggregation variables
@@ -155,18 +155,18 @@ void Ml::regression(float inp_par, float inp_ar)
       c = c - (alpha*toterr_0/_train_el);
       itno++;
     }
-    SerialUSB.print("Iterations : ");
-    SerialUSB.println(itno);
-    SerialUSB.print("Total Error :");
-    SerialUSB.println(tot_cost);
+    //SerialUSB.print("Iterations : ");
+    //SerialUSB.println(itno);
+    //SerialUSB.print("Total Error :");
+    //SerialUSB.println(tot_cost);
     //SerialUSB.println( );
-    SerialUSB.print("Slope : ");
-    SerialUSB.println(m);
-    SerialUSB.print("Intercept : ");
-    SerialUSB.println(c);
+    //SerialUSB.print("Slope : ");
+    //SerialUSB.println(m);
+    //SerialUSB.print("Intercept : ");
+    //SerialUSB.println(c);
     _slope = m;
     _inter = c;
-  test();
+  //test();
   }
 
 void Ml::test(){
@@ -174,7 +174,6 @@ void Ml::test(){
   int curr_val;
   int count = 0;
   int slop = 0;
-  SerialUSB.println(_train_el);
   while(count<_test_el){
     slop = count+_train_el;
     curr_val = (_slope*slop)+_inter-buff_te[count];
