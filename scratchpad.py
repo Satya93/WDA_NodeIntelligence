@@ -7,7 +7,7 @@ import plotter
 
 rate = 0.1
 lim = 0.00005
-data_file = 'lrg_100_10.csv'
+data_file = '100_deg2.csv'
 thr = 15
 
 regression.reset()

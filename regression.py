@@ -154,7 +154,7 @@ def test():
         tot_cost += cost
         iterations += 1
     tot_cost = tot_cost/(2*numel)
-    _test_cost = math.sqrt(tot_cost)
+    _test_cost = tot_cost
     
 
 
