@@ -31,7 +31,7 @@ def load(filename, train):
         for row in reader:
             datas = row
     for x in datas:
-        _data.append(int(x))
+        _data.append(float(x))
     _train_data.append(_data[:train])
     _train_data = _train_data[0]
     _test_data.append(_data[train:])

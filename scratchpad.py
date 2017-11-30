@@ -7,17 +7,22 @@ import plotter
 
 rate = 0.1
 lim = 0.00005
-data_file = '100_deg2.csv'
+data_file = '100_nonlin.csv'
 thr = 15
 
-r1 = 0.2
-r2 = 0.3
-r3 = 0.9
-r4 = 0.93
-r5 = 0.95
-r6 = 0.98
+r1 = 1
+r2 = 0.2
+r3 = 0.3
+r4 = 0.4
+r5 = 0.5
+r6 = 0.6
+r7 = 0.7
+r8 = 0.8
+r9 = 0.9
+
 
 regression.reset()
+
 regression.load(data_file,75)
 results1 = regression.train(lim,thr,r1)
 axis1 = range(0,len(results1),1)
@@ -47,7 +52,23 @@ regression.load(data_file,75)
 results6 = regression.train(lim,thr,r6)      
 axis6 = range(0,len(results6),1)
 regression.reset()
-    #plotter.plot_adaptive(regression._cost_array,lim)
+
+regression.load(data_file,75)
+results7 = regression.train(lim,thr,r7)      
+axis7 = range(0,len(results7),1)
+regression.reset()
+
+regression.load(data_file,75)
+results8 = regression.train(lim,thr,r8)      
+axis8 = range(0,len(results8),1)
+regression.reset()
+
+regression.load(data_file,75)
+results9 = regression.train(lim,thr,r9)      
+axis9 = range(0,len(results9),1)
+regression.reset()
+
+#plotter.plot_adaptive(regression._cost_array,lim)
 
 plt.semilogy(axis3,results3,"g",axis4,results4,"y",axis5,results5,"b",axis6,results6,"r")
         
