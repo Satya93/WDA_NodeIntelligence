@@ -61,7 +61,7 @@ def train(lim, alp, gr):
     flag = 0
     _cost_array = []
 
-    while abs(tot_cost-old_cost) > lim or flag == 0:
+    while cie > lim or flag == 0:
         # Reset aggregation variables
         estimates = []
         old_cost = tot_cost
@@ -90,13 +90,14 @@ def train(lim, alp, gr):
         
         # Append costs to cost array
         tot_cost = tot_cost/(2*numel)
+        cie = abs(old_cost-tot_cost)
         _cost_array.append(tot_cost)
 
         # Adaptive Step size Learning rate
         if old_cost!=tot_cost:
             factor = gr
             if gr==1:
-                factor = 2.7183**(-1/abs(old_cost-tot_cost))
+                factor = 2.7183**(-1/cie)
             if (tot_cost < old_cost) :
                 alpha += alpha*factor
                 #alpha += alpha*factor
@@ -113,12 +114,12 @@ def train(lim, alp, gr):
         _slope = _slope - del_1
 
         # Prints and debugs
-        #print "At slope = %.2f" %_slope, " and intercept = %.2f" %_intercept, " Total cost is : ", tot_cost
+        print "At slope = %.2f" %_slope, " and intercept = %.2f" %_intercept, " Total cost is : ", tot_cost
 
         flag = 1
         iterations+=1
         #print "Error : ", tot_cost , " | Iterations = ", iterations
-        #time.sleep(1)
+        time.sleep(0.4)
 
         test()
         if _test_cost < alp:

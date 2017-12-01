@@ -93,19 +93,19 @@ int Ml::get_data()
 void Ml::regression(float inp_par, float inp_ar)
 {
   float ar = inp_ar;
-  float err = 1000; 
+  int err = 1000; 
   float m = 0;
   float c = 0;
-  float calc_val;
+  int calc_val;
   float alpha = 1;
-  float err_1;
-  float err_0;
-  float toterr_0;
-  float toterr_1;
-  double cost = 1000; // Power and accuracy comparison using double and float
+  int err_1;
+  int err_0;
+  int toterr_0;
+  int toterr_1;
+  int cost = 1000; // Power and accuracy comparison using double and float
   int i = 0;
-  float olderr = 8;
-  float tot_cost = 10;
+  long olderr = 8;
+  long tot_cost = 10;
   int itno = 0;
   int boost = 1;
   
@@ -155,8 +155,10 @@ void Ml::regression(float inp_par, float inp_ar)
       c = c - (alpha*toterr_0/_train_el);
       itno++;
     }
-    SerialUSB.print("Iterations : ");
-    SerialUSB.println(itno);
+    //SerialUSB.print("Iterations : ");
+    //SerialUSB.println(itno);
+    //SerialUSB.print("CIE : ");
+    //SerialUSB.println(abs(olderr-tot_cost));
     //SerialUSB.print("Total Error :");
     //SerialUSB.println(tot_cost);
     //SerialUSB.println( );
@@ -166,7 +168,7 @@ void Ml::regression(float inp_par, float inp_ar)
     //SerialUSB.println(c);
     _slope = m;
     _inter = c;
-  test();
+  //test();
   }
 
 void Ml::test(){

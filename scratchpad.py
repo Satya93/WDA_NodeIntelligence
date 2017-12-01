@@ -6,11 +6,11 @@ import regression
 import plotter
 
 rate = 0.1
-lim = 0.00005
-data_file = '100_nonlin.csv'
+lim = 0.005
+data_file = 'lrg_100_5.csv'
 thr = 15
 
-r1 = 0.1
+r1 = 0.9
 r2 = 0.2
 r3 = 0.3
 r4 = 0.4
