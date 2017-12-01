@@ -155,8 +155,8 @@ void Ml::regression(float inp_par, float inp_ar)
       c = c - (alpha*toterr_0/_train_el);
       itno++;
     }
-    //SerialUSB.print("Iterations : ");
-    //SerialUSB.println(itno);
+    SerialUSB.print("Iterations : ");
+    SerialUSB.println(itno);
     //SerialUSB.print("Total Error :");
     //SerialUSB.println(tot_cost);
     //SerialUSB.println( );
@@ -166,7 +166,7 @@ void Ml::regression(float inp_par, float inp_ar)
     //SerialUSB.println(c);
     _slope = m;
     _inter = c;
-  //test();
+  test();
   }
 
 void Ml::test(){

@@ -10,7 +10,7 @@ lim = 0.00005
 data_file = '100_nonlin.csv'
 thr = 15
 
-r1 = 1
+r1 = 0.1
 r2 = 0.2
 r3 = 0.3
 r4 = 0.4

@@ -15,7 +15,7 @@ void setup() {
   SerialUSB.print("Enter Threshold CIE : ");
 }
 void loop() {
-  float cie = 0.00005;
+  float cie = 0.5;
   float inpu;
   float rate;
   byte incomingByte = 0;
@@ -38,11 +38,11 @@ void loop() {
     //ml.append(100);
     //ml.append(300);
     ml.sample(100,75);
-    SerialUSB.println("Begin");
+    //SerialUSB.println("Begin");
     pd_rgb_led(PD_RED);
     ml.regression(cie,rate);
     pd_rgb_led(PD_OFF);
-    SerialUSB.println("Done");
+    //SerialUSB.println("Done");
     //interrupts();
   }
 
