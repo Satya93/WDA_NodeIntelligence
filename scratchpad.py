@@ -6,16 +6,16 @@ import regression
 import plotter
 
 rate = 0.1
-lim = 0.005
-data_file = 'lrg_100_5.csv'
+lim = 0.5
+data_file = 'lrg_100_10.csv'
 thr = 15
 
-r1 = 0.9
-r2 = 0.2
-r3 = 0.3
-r4 = 0.4
+r1 = 0.5
+r2 = 0.7
+r3 = 0.9
+r4 = 1
 r5 = 0.5
-r6 = 0.6
+r6 = 1
 r7 = 0.7
 r8 = 0.8
 r9 = 0.9
@@ -70,10 +70,11 @@ regression.reset()
 
 #plotter.plot_adaptive(regression._cost_array,lim)
 
-plt.semilogy(axis3,results3,"g",axis4,results4,"y",axis5,results5,"b",axis6,results6,"r")
+#plt.semilogy(axis1,results1,"pink",axis2,results2,"purple",axis3,results3,"g",axis4,results4,"y",axis5,results5,"b",axis6,results6,"r")
+plt.semilogy(axis1,results1,"pink",axis2,results2,"purple",axis3,results3,"g",axis4,results4,"y")
         
-patch1 = mpatches.Patch(color='red', label=r1)
-patch2 = mpatches.Patch(color='red', label=r2)
+patch1 = mpatches.Patch(color='pink', label=r1)
+patch2 = mpatches.Patch(color='purple', label=r2)
 patch3 = mpatches.Patch(color='green', label=r3)
 patch4 = mpatches.Patch(color='yellow', label=r4)
 patch5 = mpatches.Patch(color='blue', label=r5)
@@ -83,7 +84,8 @@ tit = 'Change in Error with Time - Adaptive Factor Comparison at CIE limit : '+s
 plt.xlabel('Iterations')
 plt.ylabel('Cost')
 plt.title(tit)
-plt.legend(handles=[patch3,patch4,patch5,patch6])
+#plt.legend(handles=[patch1,patch2,patch3,patch4,patch5,patch6])
+plt.legend(handles=[patch1,patch2,patch3,patch4])
 plt.grid(True)
 plt.show(block=True)
 
