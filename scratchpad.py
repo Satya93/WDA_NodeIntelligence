@@ -7,7 +7,7 @@ import plotter
 
 rate = 0.1
 lim = 0.5
-data_file = 'lrg_100_10.csv'
+data_file = 'lrg_100_10i.csv'
 thr = 15
 
 r1 = 0.5
