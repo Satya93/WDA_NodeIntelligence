@@ -6,16 +6,16 @@ import regression
 import plotter
 
 rate = 0.1
-lim = 0.5
-data_file = 'lrg_100_10i.csv'
+lim = 0.005
+data_file = 'lrg_100_p.csv'
 thr = 15
 
-r1 = 0.5
-r2 = 0.7
-r3 = 0.9
-r4 = 1
+r1 = 2
+r2 = 0.5
+r3 = 0.7
+r4 = 0.9
 r5 = 0.5
-r6 = 1
+r6 = 0.1
 r7 = 0.7
 r8 = 0.8
 r9 = 0.9

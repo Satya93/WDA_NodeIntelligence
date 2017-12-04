@@ -14,6 +14,7 @@ class Ml
     float minimum();
     float maximum();
     float std_dev();
+    void sample_sensor(int, int);
     void regression(float,float);
     void sample(int,int);
     void test();

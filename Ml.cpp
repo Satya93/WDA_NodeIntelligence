@@ -1,6 +1,8 @@
 #include "Ml.h"
 #include <Arduino.h>
 
+#define Analog_Pin         A4    // PA6
+
 int *buff = 0;
 int *buff_tr = 0;
 int *buff_te = 0;
@@ -79,6 +81,59 @@ void Ml::sample(int s, int tr)
   int i = 0;
 }
 
+void Ml::sample_sensor(int s, int tr){
+  buff = (int*) malloc(s * sizeof(int));
+  buff_tr = (int*) malloc(tr * sizeof(int));
+  buff_te = (int*) malloc((s-tr) * sizeof(int));
+  
+  int curr_val;
+  _mx_cnt = s;
+  int count = 0;
+  while(count<s){
+    curr_val = analogRead(Analog_Pin);
+    //get_data();
+    append(curr_val);
+    buff[count] = curr_val;
+    if(count==0)
+      {
+        _min = curr_val;
+        _max = curr_val;
+      }
+     else{
+        if (curr_val < _min){
+        _min = curr_val;
+      }
+    if (curr_val > _max){
+        _max = curr_val;
+      }
+    }
+    count++;
+    //_mean = _sum/s;
+    SerialUSB.print("Sensor Value is : ");
+    SerialUSB.println(curr_val);
+    SerialUSB.print("Mean is : ");
+    SerialUSB.println(_mean);
+    delay(100);
+  }
+  //_mean = _sum/s;
+  count = 0;
+  while(count<tr){
+    curr_val = buff[count];
+    append(curr_val);
+    buff_tr[count] = curr_val;
+    count++;
+  }
+  while(count<s){
+    curr_val = buff[count];
+    append(curr_val);
+    buff_te[count-tr] = curr_val;
+    count++;
+  }
+  _train_el = tr;
+  _test_el = s-tr;
+  int i = 0;
+}
+
 int Ml::get_data()
 {
   //Insert logic to get data
@@ -95,9 +150,9 @@ void Ml::regression(float inp_par, float inp_ar)
   float ar = inp_ar;
   int err = 1000; 
   float m = 0;
-  float c = 0;
+  float c = _mean;
   int calc_val;
-  float alpha = 1;
+  float alpha = 0.05;
   int err_1;
   int err_0;
   int toterr_0;
@@ -139,10 +194,10 @@ void Ml::regression(float inp_par, float inp_ar)
       
       // Calculate Iteration Cost
       tot_cost = tot_cost/(2*_train_el);
-      /*SerialUSB.print("Total Cost at Iteration ");
+      SerialUSB.print("Total Cost at Iteration ");
       SerialUSB.print(itno);
       SerialUSB.print(" is ");
-      SerialUSB.println(tot_cost);*/
+      SerialUSB.println(tot_cost);
       if(olderr>tot_cost){
         alpha = alpha*(1+ar);
       }
@@ -155,17 +210,17 @@ void Ml::regression(float inp_par, float inp_ar)
       c = c - (alpha*toterr_0/_train_el);
       itno++;
     }
-    //SerialUSB.print("Iterations : ");
-    //SerialUSB.println(itno);
-    //SerialUSB.print("CIE : ");
-    //SerialUSB.println(abs(olderr-tot_cost));
-    //SerialUSB.print("Total Error :");
-    //SerialUSB.println(tot_cost);
-    //SerialUSB.println( );
-    //SerialUSB.print("Slope : ");
-    //SerialUSB.println(m);
-    //SerialUSB.print("Intercept : ");
-    //SerialUSB.println(c);
+    SerialUSB.print("Iterations : ");
+    SerialUSB.println(itno);
+    SerialUSB.print("CIE : ");
+    SerialUSB.println(abs(olderr-tot_cost));
+    SerialUSB.print("Total Error :");
+    SerialUSB.println(tot_cost);
+    SerialUSB.println( );
+    SerialUSB.print("Slope : ");
+    SerialUSB.println(m);
+    SerialUSB.print("Intercept : ");
+    SerialUSB.println(c);
     _slope = m;
     _inter = c;
   //test();

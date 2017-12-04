@@ -99,20 +99,21 @@ def train(lim, alp, gr):
         # Adaptive Step size Learning rate
         if old_cost!=tot_cost:
             factor = gr
-            if gr==1:
-                
+            if gr==1 and cie>0:   
                 factor = 2.7183**(-1/cie)
             if (tot_cost < old_cost) :
                 ctr1 = 0
                 ctr2 += 1
-                factor = 2.7183**(-1/(factor/ctr2))
+                if factor>0:
+                    factor = 2.7183**(-1/(factor/ctr2))
                 alpha += alpha*factor
                 #alpha += alpha*factor
                 #print "Increase Alpha to : ",alpha," by a factor of ",1+factor
             else : 
                 ctr2 = 0
                 ctr1 += 1
-                factor =2.7183**(-1/(factor*ctr1))
+                if factor>0:
+                    factor =2.7183**(-1/(factor*ctr1))
                 alpha -= alpha*factor
                 #print "Decrease Alpha to : ",alpha," by a factor of ",1-factor
             #print 
